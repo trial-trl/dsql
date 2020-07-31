@@ -588,27 +588,7 @@ class Query extends Expression
      * surrounded by brackets:
      *  $q->where('user_id',$q->dsql()->table('users')->field('id'));
      *
-     * You can specify OR conditions by passing single argument - array:
-     *  $q->where([
-     *      ['a','is',null],
-     *      ['b','is',null]
-     *  ]);
-     *
-     * If entry of the OR condition is not an array, then it's assumed to
-     * be an expression;
-     *
-     *  $q->where([
-     *      ['age',20],
-     *      'age is null'
-     *  ]);
-     *
-     * The above use of OR conditions rely on orExpr() functionality. See
-     * that method for more information.
-     *
-     * To specify OR conditions
-     *  $q->where($q->orExpr()->where('a',1)->where('b',1));
-     *
-     * @param mixed  $field    Field, array for OR or Expression
+     * @param mixed  $field    Field or Expression
      * @param mixed  $cond     Condition such as '=', '>' or 'is not'
      * @param mixed  $value    Value. Will be quoted unless you pass expression
      * @param string $kind     Do not use directly. Use having()
@@ -625,17 +605,9 @@ class Query extends Expression
         }
 
         // Array as first argument means we have to replace it with orExpr()
+        // remove in 2020-dec
         if (is_array($field)) {
-            // or conditions
-            $or = $this->orExpr();
-            foreach ($field as $row) {
-                if (is_array($row)) {
-                    call_user_func_array([$or, 'where'], $row);
-                } else {
-                    $or->where($row);
-                }
-            }
-            $field = $or;
+            throw new Exception('Array input / OR conditions is no longer supported');
         }
 
         if ($num_args === 1 && is_string($field)) {
@@ -706,7 +678,7 @@ class Query extends Expression
     /**
      * Same syntax as where().
      *
-     * @param mixed  $field Field, array for OR or Expression
+     * @param mixed  $field Field or Expression
      * @param string $cond  Condition such as '=', '>' or 'is not'
      * @param string $value Value. Will be quoted unless you pass expression
      *
