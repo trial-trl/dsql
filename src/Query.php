@@ -678,7 +678,7 @@ class Query extends Expression
 
                 break;
             case 2:
-                if (is_object($cond) && !$cond instanceof Expressionable && !$cond instanceof Expression) {
+                if (is_object($cond) && !$cond instanceof Expressionable) {
                     throw (new Exception('Value cannot be converted to SQL-compatible expression'))
                         ->addMoreInfo('field', $field)
                         ->addMoreInfo('value', $cond);
@@ -688,7 +688,7 @@ class Query extends Expression
 
                 break;
             case 3:
-                if (is_object($value) && !$value instanceof Expressionable && !$value instanceof Expression) {
+                if (is_object($value) && !$value instanceof Expressionable) {
                     throw (new Exception('Value cannot be converted to SQL-compatible expression'))
                         ->addMoreInfo('field', $field)
                         ->addMoreInfo('cond', $cond)
@@ -966,7 +966,7 @@ class Query extends Expression
             return $this;
         }
 
-        if (is_string($field) || $field instanceof Expression || $field instanceof Expressionable) {
+        if (is_string($field) || $field instanceof Expressionable) {
             $this->args['set'][] = [$field, $value];
         } else {
             throw (new Exception('Field name should be string or Expressionable'))

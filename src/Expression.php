@@ -8,7 +8,7 @@ namespace atk4\dsql;
  * Creates new expression. Optionally specify a string - a piece
  * of SQL code that will become expression template and arguments.
  */
-class Expression implements \ArrayAccess, \IteratorAggregate
+class Expression implements Expressionable, \ArrayAccess, \IteratorAggregate
 {
     /**
      * Template string.
@@ -117,6 +117,11 @@ class Expression implements \ArrayAccess, \IteratorAggregate
     public function __toString()
     {
         return (string) $this->getOne();
+    }
+
+    public function getDsqlExpression($expression)
+    {
+        return $this;
     }
 
     /**
@@ -260,7 +265,7 @@ class Expression implements \ArrayAccess, \IteratorAggregate
         }
 
         if (!$sql_code instanceof self) {
-            throw (new Exception('Only Expressions or Expressionable objects may be used in Expression'))
+            throw (new Exception('Only Expressionable objects may be used in Expression'))
                 ->addMoreInfo('object', $sql_code);
         }
 
@@ -499,6 +504,8 @@ class Expression implements \ArrayAccess, \IteratorAggregate
             $connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
             $query = $this->render();
+
+            $statement = null;
 
             try {
                 $statement = $connection->prepare($query);
